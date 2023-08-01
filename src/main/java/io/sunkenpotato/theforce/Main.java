@@ -15,18 +15,11 @@ public class Main implements EventListener {
 
     public static String TOKEN;
 
-    static {
-        try {
-            TOKEN = new String(Main.class.getResourceAsStream("/TOKEN")
-                    .readAllBytes(),
-                    StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
 
     public static void main(String[] args) throws InterruptedException{
+        TOKEN = System.getProperty("token");
         System.out.println(TOKEN);
         JDA jda = JDABuilder.createDefault(TOKEN, GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
