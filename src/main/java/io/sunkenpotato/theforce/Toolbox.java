@@ -16,8 +16,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Toolbox {
@@ -34,6 +34,8 @@ public class Toolbox {
     char[] consonants = {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k',
             'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z'};
 
+    JSONObject command_file = new JSONObject(istream_to_string(Toolbox.class.getResourceAsStream("/commands.json")));
+    public HashMap<String, Object> command_descriptions = new HashMap<>(command_file.getJSONObject("commands").toMap());
 
     public String istream_to_string(InputStream is) {
         StringBuilder sb = new StringBuilder();

@@ -11,23 +11,28 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+@SuppressWarnings("all")
 public class Main implements EventListener {
 
     public static String TOKEN;
-
-
+    public static JDA jda;
+    public static SlashCommandRegister scr = null;
+    public static Toolbox toolbox = new Toolbox();
 
 
     public static void main(String[] args) throws InterruptedException{
         TOKEN = System.getProperty("token");
         System.out.println(TOKEN);
-        JDA jda = JDABuilder.createDefault(TOKEN, GatewayIntent.GUILD_MESSAGES,
+        jda = JDABuilder.createDefault(TOKEN, GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
                 .addEventListeners(new Main())
                 .addEventListeners(new SimpleCommandListener())
+                .addEventListeners(new SlashCommandListener())
+                .addEventListeners(new AutoCompleteHandler())
                 .build();
 
         jda.awaitReady();
+        scr = new SlashCommandRegister(jda);
     }
 
     @Override()

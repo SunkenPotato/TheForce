@@ -1,0 +1,12 @@
+{
+  "commands": {
+    "ping": "Replies with 'Pong!'",
+    "roll": "Generates a random number from 0 to 6 if no arguments are supplied. If two are supplied, then the number's range is from <arg1> to <arg2>",
+    "list": "Lists all available registered text commands",
+    "stop": "Stops the bot. Only sunkenpotato has the permission to do this",
+    "song": "Generates a random song using Spotify's API",
+    "rname": "Generates a random string of text with the length of <arg1>",
+    "purge-t": "Purges the last <arg1> messages. If 'all' is supplied, the bot deletes all messages in the channel"
+  }
+
+}

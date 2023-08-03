@@ -1,5 +1,6 @@
 package io.sunkenpotato.theforce;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -18,13 +19,14 @@ public class SimpleCommandListener extends ListenerAdapter {
 
     public static String[] common_words;
 
-    Toolbox toolbox = new Toolbox();
+    Toolbox toolbox = Main.toolbox;
 
-    public String PREFIX = "!";
+    public static String PREFIX = "!";
 
     public String[] commands = {"ping", "roll", "prefix", "stop", "song", "kick"};
 
     Random random = new Random();
+    JDA jda = Main.jda;
 
 
 
@@ -70,8 +72,7 @@ public class SimpleCommandListener extends ListenerAdapter {
             }
 
             else if (content.equals("list")) {
-                String ct = Arrays.toString(commands);
-                sendMessage(channel, ct);
+                sendMessage(channel, Arrays.toString(toolbox.command_descriptions.keySet().toArray()));
             }
 
             else if (content.startsWith("prefix")) {
@@ -95,12 +96,7 @@ public class SimpleCommandListener extends ListenerAdapter {
 
             }
 
-            else if (content.equals("kick")) {
-                /*      Member target = message.getMentions().getMembers().size() >= 1 ?
-                        message.getMentions().getMembers().get(0) : sendMessage(channel,
-                        "Not enough arguments");
-                */
-            }
+
 
             else if (content.startsWith("rname")) {
                 if (split_ct.length < 2) sendMessage(channel, "Not enough arguments!");
