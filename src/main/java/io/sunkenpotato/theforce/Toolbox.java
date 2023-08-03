@@ -1,8 +1,14 @@
 package io.sunkenpotato.theforce;
 
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.hypixel.api.HypixelAPI;
+import net.hypixel.api.http.HypixelHttpClient;
+import net.hypixel.api.unirest.UnirestHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,9 +16,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
+
 
 public class Toolbox {
 
@@ -22,6 +28,11 @@ public class Toolbox {
     String token;
     String client_id, client_secret;
     String access_token;
+    HypixelHttpClient hypixelClient;
+    HypixelAPI hypixelAPI;
+    char[] vowels = {'a', 'e', 'i', 'o', 'u', 'y'};
+    char[] consonants = {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k',
+            'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z'};
 
 
     public String istream_to_string(InputStream is) {
@@ -36,8 +47,8 @@ public class Toolbox {
     }
 
     public Toolbox() {
-        client_id = System.getProperty("client.id");
-        client_secret = System.getProperty("client.secret");
+        client_id = System.getProperty("spotify.id");
+        client_secret = System.getProperty("spotify.secret");
 
         String temp = istream_to_string(Toolbox.class.getResourceAsStream("/common-words"));
 
@@ -46,7 +57,7 @@ public class Toolbox {
         getAccessToken(client_id, client_secret);
     }
 
-    int getAccessToken(String cl_id, String cl_s) {
+    void getAccessToken(String cl_id, String cl_s) {
         try {
             HttpRequest request = HttpRequest.newBuilder().
                     uri(URI.create("https://accounts.spotify.com/api/token"))
@@ -61,14 +72,12 @@ public class Toolbox {
             access_token = (String) obj.get("access_token");
 
 
-            return resp.statusCode();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        return 400;
     }
 
     public String getSpotifySong() {
@@ -87,16 +96,51 @@ public class Toolbox {
             e.printStackTrace();
         }
 
-        if (resp.statusCode() == 401) return "!";
+        if (resp.statusCode() == 401) {
+            getAccessToken(client_id, client_secret);
+            return "Please try again. If this doesn't work, contact sunkenpotato";
+        };
 
         String response = resp.body();
 
-        JSONObject root = new JSONObject(response);
-        JSONObject tracks = root.getJSONObject("tracks");
-        JSONArray items = tracks.getJSONArray("items");
-        JSONObject track_obj = (JSONObject) items.get(new Random().nextInt(0, items.length() - 1));
+        JSONArray root = new JSONObject(response)
+                .getJSONObject("tracks")
+                .getJSONArray("items");
+
+        JSONObject track_obj = (JSONObject) root.get(new Random()
+                .nextInt(0, root.length() - 1));
         JSONObject ext_urls = track_obj.getJSONObject("external_urls");
 
         return ext_urls.getString("spotify");
+    }
+
+
+
+    public String genRandomName(int len) {
+        StringBuilder sb = new StringBuilder();
+
+
+        if (len % 2 == 0) for (int i = 0; i < len / 2; i++) {
+            sb.append(consonants[random.nextInt(0, consonants.length - 1)]);
+            sb.append(vowels[random.nextInt(0, vowels.length - 1)]);
+        }
+        else {
+            for (int i = 0; i < len / 2; i++) {
+                sb.append(consonants[random.nextInt(0, consonants.length - 1)]);
+                sb.append(vowels[random.nextInt(0, vowels.length - 1)]);
+            }
+            sb.append(consonants[random.nextInt(0, consonants.length - 1)]);
+        }
+
+        return sb.toString();
+    }
+
+    public boolean isParsable(String n) {
+        try {
+            Integer.parseInt(n);
+            return true;
+        } catch (NumberFormatException unused) {
+            return false;
+        }
     }
 }
